@@ -1,8 +1,3 @@
 input.onButtonPressed(Button.A, function () {
-    custom.driveToPosition(
-    15,
-    15,
-    15,
-    15
-    )
+    custom.driveWithYawNormalized(50, 50)
 })

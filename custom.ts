@@ -12,12 +12,17 @@ namespace custom {
     export class DriveCommandsExt {
         public static readonly driveToPositionSI: number = 0x38;
         public static readonly driveTankNormalized: number = 0x33;
+        public static readonly driveWithYawNormalized: number = 0x37;
     }
 
     export class Utilities {
         public static floatToByteArray(value: number): Array<number> {
             let buffer: Buffer = Buffer.pack('>f',[value]);
             return buffer.toArray(NumberFormat.Float32BE);
+        }
+        
+        public static int8ToByteArray(value: number): Array<number> {
+            return sphero.Utilities.numberToByteArray(value, 1);
         }
     }
 
@@ -49,6 +54,32 @@ namespace custom {
             sphero.ApiTargetsAndSources.serviceSource,
             sphero.DriveCommands.driveDeviceId,
             sphero.DriveCommands.driveWithHeadingCommandId,
+            messageData
+        );
+
+        serial.writeBuffer(pins.createBufferFromArray(apiMessage.messageRawBytes));
+    }
+
+    //% block="drive with yaw %yaw| and speed %speed|"
+    //% yaw.min=-32767 yaw.max=32767
+    //% speed.min=-127 speed.max=127
+    export function driveWithYawNormalized (yaw:number,speed:number): void {
+        let flags: number = 0x00;
+
+        let messageData: Array<number> = sphero.Utilities.int16ToByteArray(yaw);
+        let speedArray: Array<number> = Utilities.int8ToByteArray(speed);
+
+        for (let i: number = 0; i < speedArray.length; i++) {
+            messageData.push(speedArray[i]);
+        }
+
+        messageData.push(flags);
+
+        let apiMessage = sphero.buildApiCommandMessageWithDefaultFlags(
+            sphero.ApiTargetsAndSources.robotStTarget,
+            sphero.ApiTargetsAndSources.serviceSource,
+            sphero.DriveCommands.driveDeviceId,
+            DriveCommandsExt.driveWithYawNormalized,
             messageData
         );
 
