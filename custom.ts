@@ -13,6 +13,40 @@ namespace custom {
         public static readonly driveToPositionSI: number = 0x38;
     }
 
+    /**
+     * Recreate drive function as test
+     */
+    //% block="drive with speed %speed| and heading %heading|"
+    //% help=spheroRvr/drive
+    //% speed.min=-255 speed.max=255
+    //% heading.min=0 heading.max=359
+    //% subcategory=Extension
+    export function drive(speed: number, heading: number): void {
+        let flags: number = 0x00;
+        if (speed < 0) {
+            flags = 0x01;
+        }
+
+        let messageData: Array<number> = [Math.abs(speed)];
+        let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
+
+        for (let i: number = 0; i < headingArray.length; i++) {
+            messageData.push(headingArray[i]);
+        }
+
+        messageData.push(flags);
+
+        let apiMessage = sphero.buildApiCommandMessageWithDefaultFlags(
+            sphero.ApiTargetsAndSources.robotStTarget,
+            sphero.ApiTargetsAndSources.serviceSource,
+            sphero.DriveCommands.driveDeviceId,
+            sphero.DriveCommands.driveWithHeadingCommandId,
+            messageData
+        );
+
+        serial.writeBuffer(pins.createBufferFromArray(apiMessage.messageRawBytes));
+    }
+
     //% block="drive to ( %x|m, %y|m ) at speed %speed| with heading %heading|"
     //% x.min=0 x.max=5
     //% y.min=0 y.max=5
