@@ -28,11 +28,13 @@ namespace custom {
         }
 
         let messageData: Array<number> = [Math.abs(speed)];
-        let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
+        //let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
 
-        for (let i: number = 0; i < headingArray.length; i++) {
-            messageData.push(headingArray[i]);
-        }
+        //for (let i: number = 0; i < headingArray.length; i++) {
+        //    messageData.push(headingArray[i]);
+        //}
+
+        messageData.push(heading);
 
         messageData.push(flags);
 
