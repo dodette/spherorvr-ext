@@ -27,8 +27,7 @@ namespace custom {
             flags = 0x01;
         }
 
-        //let messageData: Array<number> = [Math.abs(speed)];
-        let messageData: Array<number> = sphero.Utilities.int16ToByteArray(speed);
+        let messageData: Array<number> = [Math.abs(speed)];
         let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
         
         for (let i: number = 0; i < headingArray.length; i++) {
