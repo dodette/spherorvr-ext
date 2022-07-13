@@ -1,3 +1,3 @@
 input.onButtonPressed(Button.A, function () {
-    custom.driveWithYawNormalized(50, 50)
+    custom.drive(152, 359)
 })

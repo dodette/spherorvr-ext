@@ -41,7 +41,12 @@ namespace custom {
         }
 
         let messageData: Array<number> = [Math.abs(speed)];
-        let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
+        //let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
+        //let headingArray: Array<number> = Buffer.pack('>h', [heading]).toArray(NumberFormat.Int16BE);
+
+        let headingBuffer: Buffer = Buffer.create(2);
+        Buffer.__packUnpackCore('>h',[heading],headingBuffer,true);
+        let headingArray: Array<number> = helpers.bufferToArray(headingBuffer,NumberFormat.Int16BE);
         
         for (let i: number = 0; i < headingArray.length; i++) {
             messageData.push(headingArray[i]);
