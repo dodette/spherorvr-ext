@@ -1,3 +1,8 @@
 input.onButtonPressed(Button.A, function () {
-    custom.driveTank(-33, 255)
+    custom.driveToPosition(
+    15,
+    15,
+    15,
+    15
+    )
 })

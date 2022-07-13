@@ -14,12 +14,12 @@ namespace custom {
         public static readonly driveTankNormalized: number = 0x33;
     }
 
-/*     export class Utilities {
+    export class Utilities {
         public static floatToByteArray(value: number): Array<number> {
-            
-            return this.numberToByteArray(value, 4);
+            let buffer: Buffer = Buffer.pack('>f',[value]);
+            return buffer.toArray(NumberFormat.Float32BE);
         }
-    } */
+    }
 
     /**
      * Recreate drive function as test
@@ -56,14 +56,13 @@ namespace custom {
     }
 
     //% block="tank drive %left| velocity %right| velocity"
-    //% left.min=-255 left.max=255
-    //% right.min=-255 right.max=255
+    //% left.min=-127 left.max=127
+    //% right.min=-127 right.max=127
     export function driveTank(left:number, right:number): void {
         let flags: number = 0x00;
         
         let messageData: Array<number> = sphero.Utilities.int16ToByteArray(left);
         let rightArray: Array<number> = sphero.Utilities.int16ToByteArray(right);
-
         for (let i: number = 0; i < rightArray.length; i++) {
             messageData.push(rightArray[i]);
         }
@@ -81,7 +80,7 @@ namespace custom {
         serial.writeBuffer(pins.createBufferFromArray(apiMessage.messageRawBytes));
     }
 
-/*     //% block="drive to ( %x|, %y| ) cm at speed %speed| with heading %heading|"
+     //% block="drive to ( %x|, %y| ) cm at speed %speed| with heading %heading|"
     //% x.min=0 x.max=500
     //% y.min=0 y.max=500
     //% speed.min=0 speed.max=2
@@ -92,21 +91,28 @@ namespace custom {
         // to drive to an internal reference position
         let flags: number = 0x00;
 
+        // Convert to cm to m (SI)
         x = x/100;
         y = y/100;
 
         let messageData: Array<number> = [];
-        let headingArray: Array<number> = sphero.Utilities.int16ToByteArray(heading);
-        let xArray: Array<number> = sphero.Utilities.int32ToByteArray(x/100);
-        let yArray: Array<number> = sphero.Utilities.int32ToByteArray(y/100);
+        let headingArray: Array<number> = Utilities.floatToByteArray(heading);
+        let xArray: Array<number> = Utilities.floatToByteArray(x);
+        let yArray: Array<number> = Utilities.floatToByteArray(y);
+        let speedArray: Array<number> = Utilities.floatToByteArray(speed);
 
         for (let i: number = 0; i < headingArray.length; i++) {
             messageData.push(headingArray[i]);
         }
-
-        messageData.push(x);
-        messageData.push(y);
-        messageData.push(Math.abs(speed));
+        for (let i: number = 0; i < xArray.length; i++) {
+            messageData.push(xArray[i]);
+        }
+        for (let i: number = 0; i < yArray.length; i++) {
+            messageData.push(yArray[i]);
+        }
+        for (let i: number = 0; i < speedArray.length; i++) {
+            messageData.push(speedArray[i]);
+        }
 
         messageData.push(flags);
 
@@ -119,5 +125,5 @@ namespace custom {
         );
 
         serial.writeBuffer(pins.createBufferFromArray(apiMessage.messageRawBytes));
-    } */
+    }
 }
